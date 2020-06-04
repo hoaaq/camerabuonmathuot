@@ -1,0 +1,56 @@
+
+// router.get('/importdata', function (req, res, next) {
+//   const fulldata = require('../dstinhhuyenxa20052020.json');
+//   const groupBy = function (xs, key) {
+//     return xs.reduce(function (rv, x) {
+//       (rv[x[key]] = rv[x[key]] || []).push(x);
+//       return rv;
+//     }, {});
+//   };
+//   const tmp = groupBy(fulldata, 'Mã TP');
+//   const formattinh = Object.keys(tmp).map((idtinhthanhpho) => {
+//     var tentinhthanhpho = null;
+//     const rs = tmp[idtinhthanhpho].map((tinh) => {
+//       tentinhthanhpho = tinh['Tỉnh Thành Phố'];
+//       return {
+//         quanhuyen: tinh['Quận Huyện'],
+//         idquanhuyen: tinh['Mã QH'],
+//         phuongxa: tinh['Phường Xã'],
+//         idphuongxa: tinh['Mã PX'],
+//         cap: tinh['Cấp'],
+//         tentienganh: tinh['Tên Tiếng Anh'],
+//       };
+//     });
+//     return {
+//       tentinhthanhpho,
+//       idtinhthanhpho: idtinhthanhpho,
+//       quanhuyen: rs,
+//     };
+//   });
+//   const finalformat = formattinh.map((tinh) => {
+//     const tmpquanhuyen = groupBy(tinh.quanhuyen, 'idquanhuyen');
+//     const quanhuyenformated = Object.keys(tmpquanhuyen).map((idquanhuyen) => {
+//       var tenquanhuyen = null;
+//       const rs = tmpquanhuyen[idquanhuyen].map((huyen) => {
+//         tenquanhuyen = huyen.quanhuyen;
+//         return {
+//           tenphuongxa: huyen.phuongxa,
+//           idphuongxa: huyen.idphuongxa,
+//           cap: huyen.cap,
+//           tentienganh: huyen.tentienganh || null,
+//         };
+//       });
+//       return {
+//         tenquanhuyen,
+//         idquanhuyen: idquanhuyen,
+//         phuongxa: rs,
+//       };
+//     });
+//     return {
+//       idtinhthanhpho: tinh.idtinhthanhpho,
+//       tentinhthanhpho: tinh.tentinhthanhpho,
+//       quanhuyen: quanhuyenformated,
+//     };
+//   });
+//   return res.send(finalformat);
+// });

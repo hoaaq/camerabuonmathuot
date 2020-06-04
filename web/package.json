@@ -1,0 +1,45 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "description": "My epic Nuxt.js project",
+  "author": "hoaaq",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "@nuxtjs/auth": "^4.9.1",
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/dotenv": "^1.4.0",
+    "@nuxtjs/pwa": "^3.0.0-0",
+    "@nuxtjs/toast": "^3.3.0",
+    "adapterjs": "^0.15.4",
+    "base64-arraybuffer": "^0.2.0",
+    "lodash": "^4.17.15",
+    "moment": "^2.25.3",
+    "net": "^1.0.2",
+    "nuxt": "^2.0.0",
+    "request": "^2.88.2",
+    "socket.io-client": "^2.3.0",
+    "tls": "^0.0.1",
+    "vee-validate": "^3.3.0",
+    "vue-socket.io-extended": "^4.0.3",
+    "vue-sweetalert2": "^3.0.5",
+    "vuedraggable": "^2.23.2"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^2.0.0",
+    "@nuxtjs/eslint-module": "^1.0.0",
+    "@nuxtjs/vuetify": "^1.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1"
+  }
+}
