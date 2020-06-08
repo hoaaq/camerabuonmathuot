@@ -4,7 +4,13 @@ var multer = require('multer');
 var upload = multer();
 
 const auth = require('@middlewares/auth');
-const { checkId, addnewSchema, updateSchema } = require('./validator');
+const {
+  checkId,
+  addnewSchema,
+  updateSchema,
+  getcamdvrSchema,
+  addbydvrSchema,
+} = require('./validator');
 const {
   gettreelocation,
   findbylocation,
@@ -13,6 +19,7 @@ const {
   editcam,
   delcam,
   uploadInsert,
+  getcamfromdvr,
   addbydvr,
 } = require('./service');
 
@@ -50,7 +57,24 @@ router.post('/upload', upload.single('file'), [auth], async function (
   }
 });
 
-router.post('/addbydvr', [auth], async function (req, res, next) {
+router.post('/getcamfromdvr', [auth, getcamdvrSchema], async function (
+  req,
+  res,
+  next
+) {
+  try {
+    const body = req.body;
+    return res.send(await getcamfromdvr({ ...body }));
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/addbydvr', [auth, addbydvrSchema], async function (
+  req,
+  res,
+  next
+) {
   try {
     const body = req.body;
     await addbydvr({ ...body });

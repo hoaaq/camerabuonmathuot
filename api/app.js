@@ -2,7 +2,6 @@ require('module-alias/register');
 require('dotenv').config();
 var express = require('express');
 var path = require('path');
-const { Kafka } = require('kafkajs');
 
 require('express-async-errors');
 const { notfoundapi, errorHandler } = require('@utils/errorHandler');
@@ -25,46 +24,6 @@ app.use(cookieParser());
 app.use('/public', express.static(path.join(__dirname, '/public')));
 
 app.use('/', indexRouter);
-
-const kafka = new Kafka({
-  clientId: 'my-app',
-  brokers: ['192.168.1.119:9092'],
-});
-
-const producer = kafka.producer();
-const consumer = kafka.consumer({ groupId: 'test-group' });
-
-// var rtsp = require('rtsp-ffmpeg');
-// var uri = 'rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov';
-// var stream = new rtsp.FFMpeg({ input: uri });
-// var pipeStream = async function (data) {
-//   await producer.send({
-//     topic: 'test-topic',
-//     messages: [{ value: data.toString('base64') }],
-//   });
-// };
-
-const run = async () => {
-  await producer.connect();
-  stream.on('data', pipeStream);
-  // Producing
-
-  // Consuming
-  await consumer.connect();
-  await consumer.subscribe({ topic: 'test-topic', fromBeginning: true });
-
-  await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-      console.log({
-        partition,
-        offset: message.offset,
-        value: message.value.toString(),
-      });
-    },
-  });
-};
-
-// run().catch(console.error);
 
 // region socketServer
 app._socket = null;

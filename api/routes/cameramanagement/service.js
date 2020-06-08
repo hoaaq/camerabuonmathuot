@@ -1,6 +1,8 @@
 const { depthRecursiveRelation } = require('@utils/helper');
 const { Location } = require('@models/location');
 const { Camera } = require('@models/camera');
+const { Dvr } = require('@models/dvr');
+const { ClientDigestAuth } = require('@mreal/digest-auth');
 if (typeof require !== 'undefined') XLSX = require('xlsx');
 
 const axios = require('axios').default;
@@ -13,6 +15,7 @@ module.exports = {
   editcam,
   delcam,
   uploadInsert,
+  getcamfromdvr,
   addbydvr,
 };
 
@@ -113,24 +116,87 @@ async function uploadInsert({ file, location_id }) {
   }
 }
 
-async function addbydvr({ dvrlink }) {
-  const trx = await Camera.startTransaction();
+async function getcamfromdvr({ link, username, password }) {
   try {
-    const result = axios.get(
-      'http://api:abc123456@783d07f83644.sn.mynetname.net:8080/cgi-bin/configManager.cgi',
-      {
-        params: {
-          action: 'getConfig',
-          name: 'ChannelTitle',
+    await axios.get(link);
+  } catch (error) {
+    try {
+      const headers = error.response.headers;
+      const incomingDigest = ClientDigestAuth.analyze(
+        headers['www-authenticate']
+      );
+      const digest = ClientDigestAuth.generateProtectionAuth(
+        incomingDigest,
+        username,
+        password,
+        {
+          method: 'GET',
+          uri: link,
+          counter: 1,
+        }
+      );
+      const res = await axios.get(link, {
+        headers: {
+          Authorization: `Digest username="${digest.username}", realm="${digest.realm}", nonce="${digest.nonce}", response="${digest.response}", uri="${digest.uri}", qop="${digest.qop}", cnonce="${digest.cnonce}", nc="${digest.nc}", algorithm="${digest.algorithm}", opaque="${digest.opaque}"`,
         },
+      });
+      const listcam = res.data.split(/\r?\n/);
+      const pattern = /(table\.ChannelTitle\[)(\d+)(\]\.Name=)(.+)/;
+      let data = [];
+      listcam.forEach((element) => {
+        const ar = pattern.exec(element);
+        if (ar) {
+          const channel = Number.parseInt(ar[2]);
+          const name = ar[4];
+          data.push({
+            channel,
+            name,
+          });
+        }
+      });
+      return data;
+    } catch (error2) {
+      throw error2;
+    }
+  }
+}
+
+async function addbydvr({
+  dvrhost,
+  dvrport,
+  username,
+  password,
+  location_id,
+  listcam,
+}) {
+  const trx = await Dvr.startTransaction();
+  try {
+    const newdvr = await Dvr.query(trx).insertAndFetch({
+      host: dvrhost,
+      port: dvrport,
+      us: username,
+      pw: password,
+    });
+    const locations = await Location.query()
+      .findById(location_id)
+      .withGraphFetched(`[parent.${depthRecursiveRelation('[parent?]', 3)}]`);
+    function recursive(item) {
+      if (!item.parent) {
+        return item.ten;
       }
-    );
-    console.log(await result);
+      return item.ten + ' ' + recursive(item.parent);
+    }
+    const fulltext = recursive(locations);
+    listcam.forEach((item) => {
+      item.location_id = location_id;
+      item.dvrconfig_id = newdvr.id;
+      item.fulltext = fulltext;
+    });
+    await Camera.query(trx).insert(listcam);
     trx.commit();
     return;
   } catch (error) {
     trx.rollback();
-    // throw error;
     throw error;
   }
 }

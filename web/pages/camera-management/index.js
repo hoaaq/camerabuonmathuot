@@ -8,12 +8,15 @@ export default {
       dialog: false,
       dialogFile: false,
       dialogDvr: false,
+      dialogConfirmDvr: false,
       modalTitle: '',
       modalItem: {},
       editedIndex: -1,
       fileUpload: null,
       fileLocation: null,
-      dvrlink: null
+      dvr: {},
+      listfromdvr: [],
+      dvrhost: null
     }
   },
   computed: {
@@ -137,15 +140,36 @@ export default {
     async submitDvr() {
       if (await this.$refs.observerDvr.validate()) {
         try {
-          await this.$axios.$post('/cameramanagement/addbydvr', {
-            dvrlink: this.dvrlink
-          })
+          this.listfromdvr = await this.$axios.$post(
+            '/cameramanagement/getcamfromdvr',
+            {
+              ...this.dvr
+            }
+          )
           this.dialogDvr = false
-          this.$toast.success('Thêm mới thành công')
-          await this.refresh()
+          this.dialogConfirmDvr = true
         } catch (error) {
           this.$toast.error(error.response.data.message)
         }
+      }
+    },
+    async confirmDvr() {
+      try {
+        const parselink = new URL(this.dvr.link)
+        const data = {
+          dvrhost: parselink.hostname,
+          dvrport: parselink.port,
+          username: this.dvr.username,
+          password: this.dvr.password,
+          location_id: this.selecteditem.id,
+          listcam: this.listfromdvr
+        }
+        await this.$axios.$post('/cameramanagement/addbydvr', data)
+        this.dialogConfirmDvr = false
+        await this.refresh()
+        this.$toast.success('Thêm mới thành công')
+      } catch (error) {
+        this.$toast.error(error.response.data.message)
       }
     }
   }

@@ -12,7 +12,7 @@ ALTER TABLE public.camera ADD "fts" tsvector;
 CREATE FUNCTION my_trigger_function()
 RETURNS trigger AS $$
 BEGIN NEW.fts = 
-  setweight(to_tsvector(coalesce(vn_unaccent(NEW.code))), 'A') ||
+  setweight(to_tsvector(coalesce(vn_unaccent(NEW.name))), 'A') ||
 	setweight(to_tsvector(coalesce(vn_unaccent(NEW.fulltext))), 'B');
   RETURN NEW;
 END $$ LANGUAGE 'plpgsql';
@@ -32,8 +32,8 @@ const removeIndex = `
 exports.up = async function (knex) {
   await knex.schema.createTable('camera', (t) => {
     t.increments('id');
+    t.integer('channel');
     t.string('name');
-
     t.string('fulltext');
 
     t.integer('dvrconfig_id').unsigned();

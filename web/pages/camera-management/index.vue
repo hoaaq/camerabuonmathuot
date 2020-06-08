@@ -38,10 +38,10 @@
                     >
                       <v-list-item @click="editcam(item)">
                         <v-list-item-content>
-                          <v-list-item-title>{{ item.code }}</v-list-item-title>
-                          <v-list-item-subtitle>{{
-                            item.link
-                          }}</v-list-item-subtitle>
+                          <v-list-item-title>{{ item.name }}</v-list-item-title>
+                          <v-list-item-subtitle
+                            >Channel {{ item.channel }}</v-list-item-subtitle
+                          >
                         </v-list-item-content>
                       </v-list-item>
                       <v-btn icon @click="del(item)">
@@ -56,7 +56,7 @@
                     >Thêm bằng file</v-btn
                   >
                   <v-btn color="primary" text @click="addcam">Thêm mới</v-btn>
-                  <v-btn text @click="addbydvr">Thêm bằng thư mục</v-btn>
+                  <v-btn text @click="addbydvr">Thêm bằng đầu thu</v-btn>
                 </v-card-actions>
               </v-card>
             </div>
@@ -181,11 +181,46 @@
                     rules="required"
                   >
                     <v-text-field
-                      v-model="dvrlink"
+                      v-model="dvr.link"
                       label="URL đầu thu"
                       dense
                       clearable
                       persistent-hint
+                      :error-messages="errors"
+                    >
+                    </v-text-field>
+                  </ValidationProvider>
+                </v-col>
+                <v-col>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="username"
+                    rules="required"
+                  >
+                    <v-text-field
+                      v-model="dvr.username"
+                      label="Username"
+                      dense
+                      clearable
+                      persistent-hint
+                      :error-messages="errors"
+                    >
+                    </v-text-field>
+                  </ValidationProvider>
+                </v-col>
+                <v-col>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="Password"
+                    rules="required"
+                  >
+                    <v-text-field
+                      v-model="dvr.password"
+                      label="Password"
+                      dense
+                      clearable
+                      persistent-hint
+                      type="password"
                       :error-messages="errors"
                     >
                     </v-text-field>
@@ -200,6 +235,41 @@
           <v-spacer></v-spacer>
           <v-btn color="accent" text @click="dialogDvr = false">Trở về</v-btn>
           <v-btn color="success" text @click="submitDvr">Lấy camera</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="dialogConfirmDvr" max-width="70vw" light>
+      <v-card>
+        <v-card-title>
+          <span class="headline accent--text"
+            >Xác nhận thêm các camera sau?</span
+          >
+        </v-card-title>
+        <v-divider />
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <table>
+                  <tbody>
+                    <tr v-for="(item, i) in listfromdvr" :key="i">
+                      <td class="px-3">Channel {{ item.channel }}:</td>
+                      <td class="px-3">{{ item.name }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-divider />
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="accent" text @click="dialogConfirmDvr = false"
+            >Trở về</v-btn
+          >
+          <v-btn color="success" text @click="confirmDvr">Lấy camera</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

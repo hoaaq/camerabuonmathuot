@@ -88,7 +88,7 @@
           @click="handleSelectcam(item)"
         >
           <v-list-item-content>
-            <v-list-item-title>{{ item.code }}</v-list-item-title>
+            <v-list-item-title>{{ item.name }}</v-list-item-title>
             <v-list-item-subtitle>{{ item.fulltext }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
