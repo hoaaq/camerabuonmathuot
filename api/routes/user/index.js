@@ -4,6 +4,7 @@ var router = express.Router();
 const auth = require('@middlewares/auth');
 const { loginSchema } = require('./validator');
 const { login, logout } = require('./service');
+const Pulsar = require('pulsar-client');
 
 router.post('/login', [loginSchema], async function (req, res, next) {
   try {
@@ -18,12 +19,15 @@ router.post('/login', [loginSchema], async function (req, res, next) {
 
 router.get('/me', [auth], async function (req, res, next) {
   try {
-    let _socket = req.app.get('_socket');
-    let socketUser = req.app.get('socketUser');
     //userid must be unique
     req.app._socket.userId = user.id;
     //now every user has a socket associated with their id
     req.app.socketUser[req.app._socket.userId] = req.app._socket;
+    req.app.pulsar = new Pulsar.Client({
+      serviceUrl: process.env.PULSAR_HOST,
+      operationTimeoutSeconds: 30,
+    });
+    req.app.pulsarUser[user.id] = req.app.pulsar;
     return res.send({
       user: { ...req.user },
     });

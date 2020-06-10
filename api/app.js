@@ -33,30 +33,21 @@ app.io.sockets.on('connection', function (socket) {
   console.log(socket.id + ' connected');
 });
 
-// const Pulsar = require('pulsar-client');
+// Create a pulsar client
+app.pulsar = null;
+app.pulsarUser = {};
 
-// (async () => {
-//   // Create a client
-//   const client = new Pulsar.Client({
-//     serviceUrl: 'pulsar://192.168.1.4:6650',
-//     operationTimeoutSeconds: 30,
-//   });
+// // Create a reader
+// const reader = await client.createReader({
+//   topic: 'persistent://public/default/test-topic',
+//   startMessageId: Pulsar.MessageId.latest(),
+// });
 
-//   // Create a reader
-//   const reader = await client.createReader({
-//     topic: 'persistent://public/default/test-topic',
-//     startMessageId: Pulsar.MessageId.latest(),
-//   });
-
-//   // read messages
-//   while (true) {
-//     const msg = await reader.readNext();
-//     console.log(msg.getData().toString());
-//   }
-
-//   await reader.close();
-//   await client.close();
-// })();
+// // read messages
+// while (true) {
+//   const msg = await reader.readNext();
+//   console.log(msg.getData().toString());
+// }
 
 app.use([notfoundapi, errorHandler]);
 

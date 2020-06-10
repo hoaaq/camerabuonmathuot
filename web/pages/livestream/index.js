@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import { encode } from 'base64-arraybuffer'
+// import { encode } from 'base64-arraybuffer'
+import soc from '~/plugins/socket.io.js'
 
 export default {
   async middleware({ store }) {
@@ -39,15 +40,14 @@ export default {
       await this.$store.dispatch('live/selectcam', item)
     },
     async handlePlay(cam) {
-      await this.$axios.$get('live/play', {
-        params: {
-          id: cam.id,
-          link: cam.link
-        }
-      })
       this.canvas[cam.id] = document.getElementById('canvas' + cam.id)
       this.ctx[cam.id] = this.canvas[cam.id].getContext('2d', { alpha: false })
       this.image[cam.id] = new Image()
+      await this.$axios.$get('live/play', {
+        params: {
+          id: cam.id
+        }
+      })
     },
     async sayt() {
       this.searchOverlay = true
@@ -66,24 +66,28 @@ export default {
     }
   },
   mounted() {
-    this.$socket.$subscribe('data', (data) => {
-      const canvas = this.canvas[data.id]
-      const image = this.image[data.id]
-      const ctx = this.ctx[data.id]
-      image.onload = function() {
-        ctx.drawImage(
-          image,
-          0,
-          0,
-          image.width,
-          image.height,
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        )
-      }
-      image.src = 'data:image/png;base64, ' + encode(data.buffer)
+    soc.socketStream.on('livestream', function(stream, data) {
+      const id = data.id
+      stream.on('data', function(data) {
+        // console.log(encode(data))
+        const canvas = document.getElementById('canvas' + id)
+        const ctx = canvas.getContext('2d')
+        const image = new Image()
+        image.onload = function() {
+          ctx.drawImage(
+            image,
+            0,
+            0,
+            image.width,
+            image.height,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          )
+        }
+        image.src = 'data:image/jpg;base64, ' + data
+      })
     })
   }
 }

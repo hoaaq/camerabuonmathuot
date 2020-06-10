@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import soc from '~/plugins/socket.io.js'
 export default {
   middleware({ $auth, redirect }) {
     if ($auth.loggedIn) {
@@ -72,7 +73,8 @@ export default {
               password: this.password
             }
           })
-          await this.$socket.client.connect()
+          soc.socket = soc.io(process.env.WS_URL)
+          soc.socketStream = soc.ss(soc.socket)
           await this.$auth.setUser(await this.$axios.get('/user/me'))
           this.$router.push('/')
         } catch (error) {

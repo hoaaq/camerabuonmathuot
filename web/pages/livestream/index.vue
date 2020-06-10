@@ -24,7 +24,7 @@
         <div class="topbar">
           <v-btn outlined small @click="drawer = !drawer">Tùy chọn</v-btn>
         </div>
-        <draggable v-model="selectedcam" tag="v-row" group="selectedcam">
+        <v-row>
           <v-col v-for="(cam, i) in selectedcam" :key="i" cols="3">
             <v-hover>
               <template v-slot:default="{ hover }">
@@ -56,7 +56,7 @@
               </template>
             </v-hover>
           </v-col>
-        </draggable>
+        </v-row>
       </v-container>
     </div>
 

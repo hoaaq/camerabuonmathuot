@@ -25,6 +25,7 @@
     "nuxt": "^2.0.0",
     "request": "^2.88.2",
     "socket.io-client": "^2.3.0",
+    "socket.io-stream": "^0.9.1",
     "tls": "^0.0.1",
     "vee-validate": "^3.3.0",
     "vue-socket.io-extended": "^4.0.3",

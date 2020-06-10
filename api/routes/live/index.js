@@ -20,10 +20,10 @@ router.get('/play', [auth], async function (req, res, next) {
     const data = {
       user: req.user,
       socketUser: req.app.socketUser,
+      pulsarUser: req.app.pulsarUser,
       id: req.query.id,
-      link: req.query.link,
     };
-    playcam(data);
+    await playcam(data);
     return res.end();
   } catch (error) {
     return next(error);

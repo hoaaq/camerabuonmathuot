@@ -40,10 +40,10 @@ export default {
   plugins: [
     "~/plugins/veevalidate.js",
     '~/plugins/globalComponents.js',
-    { 
-      src: '~/plugins/socket.io.js',
-      ssr: false,
-    },
+    // { 
+    //   src: '~/plugins/socket.io.js',
+    //   ssr: false,
+    // },
   ],
   /*
    ** Nuxt.js dev-modules
@@ -63,7 +63,7 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/pwa',
+    // '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
     '@nuxtjs/auth',
@@ -134,5 +134,8 @@ export default {
   pageTransition: {
     name: 'page',
     mode: 'out-in'
+  },
+  server: {
+    host: '0' // default: localhost
   }
 }
