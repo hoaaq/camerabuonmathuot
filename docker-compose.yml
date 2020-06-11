@@ -9,7 +9,7 @@ services:
     ports:
       - 5432:5432
     networks: 
-      - database_network
+      - database-network
 
   camera-api:
     env_file:
@@ -33,7 +33,7 @@ services:
     ports:
       - 4000:4000
     networks: 
-      - database_network
+      - database-network
 
   camera-web:
     env_file:
@@ -50,8 +50,8 @@ services:
     ports:
       - 3000:3000
     networks: 
-      - database_network
+      - database-network
 
 networks: 
-  database_network:
+  database-network:
     external: true
