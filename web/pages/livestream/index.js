@@ -49,6 +49,17 @@ export default {
         }
       })
     },
+    async handleStop(cam) {
+      await this.$axios.$get('live/stop', {
+        params: {
+          id: cam.id
+        }
+      })
+    },
+    async handleRemove(cam) {
+      await this.handleStop(cam)
+      await this.$store.dispatch('live/removecam', cam)
+    },
     async sayt() {
       this.searchOverlay = true
       await this.$store.dispatch('live/getcams', { input: this.searchString })
@@ -59,35 +70,57 @@ export default {
     }, 500),
     debouncesearch: _.debounce(function(e) {
       this.sayt()
-    }, 500),
-
-    async handleRemove(item) {
-      await this.$store.dispatch('live/removecam', item)
-    }
+    }, 500)
   },
   mounted() {
-    soc.socketStream.on('livestream', function(stream, data) {
-      const id = data.id
-      stream.on('data', function(data) {
-        // console.log(encode(data))
-        const canvas = document.getElementById('canvas' + id)
-        const ctx = canvas.getContext('2d')
-        const image = new Image()
-        image.onload = function() {
-          ctx.drawImage(
-            image,
-            0,
-            0,
-            image.width,
-            image.height,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          )
-        }
-        image.src = 'data:image/jpg;base64, ' + data
-      })
+    // soc.socketStream.on('livestream', function(stream, data) {
+    //   const id = data.id
+    //   stream.on('data', function(data) {
+    //     tmp += 1
+    //     console.log(tmp)
+    //     const canvas = document.getElementById('canvas' + id)
+    //     const ctx = canvas.getContext('2d')
+    //     const image = new Image()
+    //     image.onload = function() {
+    //       ctx.drawImage(
+    //         image,
+    //         0,
+    //         0,
+    //         image.width,
+    //         image.height,
+    //         0,
+    //         0,
+    //         canvas.width,
+    //         canvas.height
+    //       )
+    //     }
+    //     image.src = 'data:image/jpg;base64, ' + data
+    //   })
+    // })
+    soc.socket.on('livestream', function(data) {
+      const canvas = document.getElementById('canvas' + data.id)
+      const ctx = canvas.getContext('2d')
+      const image = new Image()
+      image.onload = function() {
+        ctx.drawImage(
+          image,
+          0,
+          0,
+          image.width,
+          image.height,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        )
+      }
+      image.src = 'data:image/jpg;base64, ' + data.buffer
+    })
+    soc.socket.on('letbeat', function() {
+      soc.socket.emit('clientbeat')
+      setInterval(() => {
+        soc.socket.emit('clientbeat')
+      }, 4500)
     })
   }
 }

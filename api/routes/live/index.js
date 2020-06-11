@@ -3,7 +3,7 @@ var router = express.Router();
 
 const auth = require('@middlewares/auth');
 const { loginSchema } = require('./validator');
-const { getcams, playcam } = require('./service');
+const { getcams, playcam, stopcam } = require('./service');
 
 router.get('/getcams', [auth], async function (req, res, next) {
   try {
@@ -20,10 +20,21 @@ router.get('/play', [auth], async function (req, res, next) {
     const data = {
       user: req.user,
       socketUser: req.app.socketUser,
-      pulsarUser: req.app.pulsarUser,
       id: req.query.id,
     };
     await playcam(data);
+    return res.end();
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get('/stop', [auth], async function (req, res, next) {
+  try {
+    const data = {
+      id: req.query.id,
+    };
+    await stopcam(data);
     return res.end();
   } catch (error) {
     return next(error);

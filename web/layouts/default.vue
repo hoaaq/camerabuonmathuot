@@ -42,12 +42,7 @@
 
 <script>
 export default {
-  async middleware({ store, params, $auth, redirect }) {
-    if (!$auth.loggedIn) {
-      return redirect('/login')
-    }
-    await store.dispatch('menu/getmenu')
-  },
+  middleware: ['checkauth'],
   data() {
     return {
       miniVariant: false

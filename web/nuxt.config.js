@@ -135,7 +135,7 @@ export default {
     name: 'page',
     mode: 'out-in'
   },
-  server: {
-    host: '0' // default: localhost
-  }
+  // server: {
+  //   host: '0' // default: localhost
+  // }
 }

@@ -1,10 +1,12 @@
 const { Camera } = require('@models/camera');
 const { depthRecursiveRelation } = require('@utils/helper');
 const Websocket = require('ws');
+const ss = require('socket.io-stream');
 
 module.exports = {
   getcams,
   playcam,
+  stopcam,
 };
 
 async function getcams({ user, query }) {
@@ -43,69 +45,100 @@ async function getcams({ user, query }) {
   }
 }
 
-async function playcam({ user, socketUser, pulsarUser, id }) {
+async function playcam({ user, socketUser, id }) {
   try {
     const camera = await Camera.query().findById(id);
     const dvr = await camera.$relatedQuery('dvr');
-    const producer = await pulsarUser[user.id].createProducer({
-      topic: process.env.PULSAR_TOPIC_PREFIX + 'camera-server-topic',
-    });
-    data = {
+
+    // Producer
+    const topicProduce = `ws://${process.env.PULSAR_HOST}:${process.env.PULSAR_PORT_WS}/ws/v2/producer/${process.env.PULSAR_TOPIC_PREFIX}camera-server-topic`;
+    const wsProduce = new Websocket(topicProduce);
+    const data = {
       camera_url: `rtsp://${encodeURIComponent(dvr.us)}:${encodeURIComponent(
         dvr.pw
       )}@${dvr.host}:${dvr.port}/cam/realmonitor?channel=${
         camera.channel + 1
       }&subtype=1`,
-      // camera_url: `rtsp://admin:123456ab@192.168.1.118:554/Streaming/Channels/102/`,
       camera_id: camera.id,
       fps: 15,
       command: 'add',
     };
-    await producer.send({
-      data: Buffer.from(JSON.stringify(data)),
+    const message = {
+      payload: Buffer.from(JSON.stringify(data)).toString('base64'),
+    };
+    const databeat = {
+      camera_id: camera.id,
+      command: 'beat',
+    };
+    const messagebeat = {
+      payload: Buffer.from(JSON.stringify(databeat)).toString('base64'),
+    };
+    wsProduce.on('open', function () {
+      wsProduce.send(JSON.stringify(message));
+      socketUser[user.id].on('clientbeat', function () {
+        wsProduce.send(JSON.stringify(messagebeat));
+      });
     });
-    await producer.close();
-    const topic =
-      process.env.PULSAR_WS +
-      camera.id +
-      '/' +
-      'sub_' +
-      dvr.id +
-      '_' +
-      camera.id +
-      '_' +
-      Date.now();
-    const ws = new Websocket(topic);
+    let hasresult = false;
+    wsProduce.on('message', function (message) {
+      if (!hasresult) {
+        const jsonres = JSON.parse(message);
+        if (jsonres.result === 'ok') {
+          socketUser[user.id].emit('letbeat', { camera_id: camera.id });
+        } else {
+          socketUser[user.id].emit('cameraerror', { camera_id: camera.id });
+        }
+        hasresult = true;
+      }
+    });
+    wsProduce.onerror = function (message) {
+      console.log(message);
+      socketUser[user.id].emit('cameraerror', { camera_id: camera.id });
+    };
 
-    var ss = require('socket.io-stream');
-    var stream = ss.createStream();
-    ss(socketUser[user.id]).emit('livestream', stream, { id });
-    ws.on('message', function (message) {
-      var receiveMsg = JSON.parse(message);
-      stream.write(receiveMsg.payload);
-      var ackMsg = { messageId: receiveMsg.messageId };
-      ws.send(JSON.stringify(ackMsg));
+    // Consumer
+    const topicConsume = `ws://${process.env.PULSAR_HOST}:${
+      process.env.PULSAR_PORT_WS
+    }/ws/v2/consumer/${process.env.PULSAR_TOPIC_PREFIX}${camera.id}/sub_${
+      dvr.id
+    }_${camera.id}_${Date.now()}`;
+    const wsConsume = new Websocket(topicConsume);
+    // const stream = ss.createStream();
+    // ss(socketUser[user.id]).emit('livestream', stream, { id });
+    wsConsume.on('message', function (message) {
+      const receiveMsg = JSON.parse(message);
+      // stream.write(receiveMsg.payload);
+      socketUser[user.id].emit('livestream', {
+        id,
+        buffer: receiveMsg.payload,
+      });
+      const ackMsg = { messageId: receiveMsg.messageId };
+      wsConsume.send(JSON.stringify(ackMsg));
     });
-    // const consumer = await pulsarUser[user.id].subscribe({
-    //   topic: process.env.PULSAR_TOPIC_PREFIX + camera.id,
-    //   subscription: 'sub_' + dvr.id + '_' + camera.id + '_' + Date.now(),
-    // });
-    // (async () => {
-    //   var ss = require('socket.io-stream');
-    //   var stream = ss.createStream();
-    //   ss(socketUser[user.id]).emit('livestream', stream, { id });
-    //   while (true) {
-    //     try {
-    //       const msg = await consumer.receive();
-    //       stream.write(msg.getData());
-    //       consumer.acknowledge(msg);
-    //     } catch (error) {
-    //       console.log(error);
-    //       break;
-    //     }
-    //   }
-    //   await consumer.close();
-    // })();
+    return;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function stopcam({ id }) {
+  try {
+    // Producer
+    const topicProduce = `ws://${process.env.PULSAR_HOST}:${process.env.PULSAR_PORT_WS}/ws/v2/producer/${process.env.PULSAR_TOPIC_PREFIX}camera-server-topic`;
+    const wsProduce = new Websocket(topicProduce);
+    const data = {
+      camera_id: id,
+      command: 'stop',
+    };
+    const message = {
+      payload: Buffer.from(JSON.stringify(data)).toString('base64'),
+    };
+    wsProduce.on('open', function () {
+      wsProduce.send(JSON.stringify(message));
+    });
+    wsProduce.onerror = function (message) {
+      console.log(message);
+    };
     return;
   } catch (error) {
     throw error;

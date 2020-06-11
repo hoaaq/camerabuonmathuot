@@ -44,7 +44,7 @@
                       <v-btn icon color="info" @click="handlePlay(cam)"
                         ><v-icon>mdi-play</v-icon></v-btn
                       >
-                      <v-btn icon color="white"
+                      <v-btn icon color="white" @click="handleStop(cam)"
                         ><v-icon>mdi-stop</v-icon></v-btn
                       >
                       <v-btn icon color="error" @click="handleRemove(cam)"
