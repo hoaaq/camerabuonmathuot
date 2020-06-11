@@ -6,6 +6,8 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: abc12345
+    ports:
+      - 5432:5432
     networks: 
       - database_network
 
