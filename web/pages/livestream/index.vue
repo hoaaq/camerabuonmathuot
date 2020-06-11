@@ -22,9 +22,55 @@
       </div> -->
       <v-container fluid>
         <div class="topbar">
+          <v-select
+            v-model="windowsinrow"
+            :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
+            label="Số cột"
+            dense
+            hide-details
+            class="flex-grow-0 mx-3"
+          ></v-select>
           <v-btn outlined small @click="drawer = !drawer">Tùy chọn</v-btn>
         </div>
-        <v-row>
+        <div class="d-flex flex-wrap liveview-contain">
+          <div
+            v-for="(cam, i) in selectedcam"
+            :key="i"
+            class="liveview-loop"
+            :style="`width: ${windowwidth}%`"
+          >
+            <v-hover>
+              <template v-slot:default="{ hover }">
+                <div
+                  class="d-flex flex-column align-center liveview-box"
+                  style="position: relative"
+                >
+                  <canvas
+                    :id="'canvas' + cam.id"
+                    class="liveviewcanvas"
+                  ></canvas>
+                  <div class="liveviewinfo">
+                    <span>{{ cam.name }}</span>
+                  </div>
+                  <v-fade-transition>
+                    <v-overlay v-if="hover" absolute>
+                      <v-btn icon color="info" @click="handlePlay(cam)"
+                        ><v-icon>mdi-play</v-icon></v-btn
+                      >
+                      <v-btn icon color="white" @click="handleStop(cam)"
+                        ><v-icon>mdi-stop</v-icon></v-btn
+                      >
+                      <v-btn icon color="error" @click="handleRemove(cam)"
+                        ><v-icon>mdi-close</v-icon></v-btn
+                      >
+                    </v-overlay>
+                  </v-fade-transition>
+                </div>
+              </template>
+            </v-hover>
+          </div>
+        </div>
+        <!-- <v-row>
           <v-col v-for="(cam, i) in selectedcam" :key="i" cols="3">
             <v-hover>
               <template v-slot:default="{ hover }">
@@ -56,7 +102,7 @@
               </template>
             </v-hover>
           </v-col>
-        </v-row>
+        </v-row> -->
       </v-container>
     </div>
 

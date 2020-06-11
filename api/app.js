@@ -13,7 +13,13 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 
 var app = express();
-app.io = require('socket.io')();
+
+var ioApp = require('http').createServer(handler);
+app.io = require('socket.io')(ioApp);
+ioApp.listen(4001);
+function handler(req, res) {
+  res.writeHead(200).end({});
+}
 
 app.use(cors());
 

@@ -8,6 +8,7 @@ export default {
   },
   data() {
     return {
+      windowsinrow: 5,
       drawer: false,
       searchString: null,
       searchOverlay: false,
@@ -17,6 +18,9 @@ export default {
     }
   },
   computed: {
+    windowwidth() {
+      return 100 / this.windowsinrow
+    },
     listcam() {
       const lscam = this.$store.state.live.listcam
       const sls = this.selectedcam.map((item) => {
@@ -97,22 +101,15 @@ export default {
     //     image.src = 'data:image/jpg;base64, ' + data
     //   })
     // })
+    const self = this
     soc.socket.on('livestream', function(data) {
-      const canvas = document.getElementById('canvas' + data.id)
-      const ctx = canvas.getContext('2d')
-      const image = new Image()
+      const canvas = self.canvas[data.id]
+      const ctx = self.ctx[data.id]
+      const image = self.image[data.id]
       image.onload = function() {
-        ctx.drawImage(
-          image,
-          0,
-          0,
-          image.width,
-          image.height,
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        )
+        canvas.width = this.naturalWidth
+        canvas.height = this.naturalHeight
+        ctx.drawImage(image, 0, 0)
       }
       image.src = 'data:image/jpg;base64, ' + data.buffer
     })

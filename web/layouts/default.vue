@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer mini-variant fixed app>
+    <v-navigation-drawer mini-variant fixed app permanent>
       <div class="fill-height d-flex flex-column">
         <v-list class="flex-grow-1">
           <v-tooltip v-for="(item, i) in menu" :key="i" right>

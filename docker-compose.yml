@@ -21,6 +21,7 @@ services:
       - TZ=Asia/Ho_Chi_Minh
     ports:
       - 4000:4000
+      - 4001:4001
     networks: 
       - database-network
 
@@ -32,7 +33,7 @@ services:
       args:
         - API_BASE_URL=http://camera-api:4000
         - API_BROWSER_URL=http://115.79.43.243:4000
-        - WS_URL=ws://115.79.43.243:4000
+        - WS_URL=ws://camera-api:4001
     environment:
       - TZ=Asia/Ho_Chi_Minh
     restart: always
