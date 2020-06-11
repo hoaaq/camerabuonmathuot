@@ -31,9 +31,9 @@ services:
     build:
       context: ./web
       args:
-        - API_BASE_URL=http://camera-api:4000
+        - API_BASE_URL=http://115.79.43.243:4000
         - API_BROWSER_URL=http://115.79.43.243:4000
-        - WS_URL=ws://composefile:4001
+        - WS_URL=ws://115.79.43.243:4001
     environment:
       - TZ=Asia/Ho_Chi_Minh
     restart: always
