@@ -62,6 +62,7 @@ async function playcam({ user, socketUser, id }) {
       camera_id: camera.id,
       fps: 15,
       command: 'add',
+      size: [-1, 480],
     };
     const message = {
       payload: Buffer.from(JSON.stringify(data)).toString('base64'),

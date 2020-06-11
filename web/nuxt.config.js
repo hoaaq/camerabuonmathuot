@@ -79,7 +79,7 @@ export default {
     }]
   ],
   env: {
-    wsUrl: process.env.WS_URL || 'ws://nuxtfile:4001'
+    wsUrl: process.env.WS_URL || 'ws://localhost:4001'
   },
   toast: {
       position: 'bottom-right',
