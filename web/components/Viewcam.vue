@@ -3,70 +3,68 @@
     <v-card loading="false" tile>
       <canvas></canvas>
     </v-card>
-    <v-divider class="pa-5"></v-divider>
-    <v-card class="pt-5">
-      <v-card-text style="margin-bottom: -35px">
-        <v-slider
-          v-model="slider"
-          label="Phut"
-          :thumb-size="30"
-          max="60"
-          thumb-label="always"
-          @change="pickMinute"
+    <v-divider class="pa-3"></v-divider>
+    <v-card>
+      <v-row>
+        <v-col cols="8" class="pl-10 mt-5" xs="8" sm="9" md="9" lg="9" xl="10">
+          <v-slider label="Phut" max="60" @change="pickMinute"> </v-slider>
+        </v-col>
+        <v-col
+          cols="4"
+          xs="4"
+          sm="3"
+          md="3"
+          lg="3"
+          xl="2"
+          class="d-flex align-center justify-start"
         >
-        </v-slider>
-      </v-card-text>
-      <v-card-text>
-        <v-slider
-          id="hour"
-          :tick-labels="ticksLabels"
-          :max="23"
-          label="Gio"
-          step="1"
-          tick-size="3"
-          @change="datetime"
-        ></v-slider>
-      </v-card-text>
+          <span>{{ hour }}:{{ minute }}</span>
+          <v-card class="pr-2 pl-2 ml-2 mr-2">
+            <v-icon color="blue-grey darken-2" medium @click="pickHour('up')"
+              >mdi-plus</v-icon
+            >
+            <br />
+            <v-icon color="blue-grey darken-2" medium @click="pickHour('down')"
+              >mdi-minus</v-icon
+            >
+          </v-card>
+          <v-btn min-width="42px" :light="darkmode" @click="pickDatetime">
+            {{ darkmode ? 'AM' : 'PM' }}
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-card>
   </v-container>
 </template>
 <script>
 export default {
   data: () => ({
-    ticksLabels: [
-      '0h',
-      '1h',
-      '2h',
-      '3h',
-      '4h',
-      '5h',
-      '6h',
-      '7h',
-      '8h',
-      '9h',
-      '10h',
-      '11h',
-      '12h',
-      '13h',
-      '14h',
-      '15h',
-      '16h',
-      '17h',
-      '18h',
-      '19h',
-      '20h',
-      '21h',
-      '22h',
-      '23h'
-    ]
+    darkmode: true,
+    minute: '00',
+    hour: 0
   }),
-  mounted() {},
+  mounted() {
+    const cv = document.querySelector('canvas')
+    cv.height *= 1.12
+  },
   methods: {
     datetime(event) {
       console.log(event)
     },
     pickMinute(event) {
-      console.log(event)
+      this.minute = event.toString()
+      console.log(this.hour + ':' + this.minute)
+    },
+    pickHour(action) {
+      if (action === 'up')
+        this.hour = this.hour < 12 ? this.hour + 1 : this.hour
+      else this.hour = this.hour > 1 ? this.hour - 1 : this.hour
+      console.log(this.hour + ':' + this.minute)
+    },
+    pickDatetime() {
+      this.darkmode = !this.darkmode
+      if (this.darkmode) console.log('day')
+      else console.log('night')
     }
   }
 }
