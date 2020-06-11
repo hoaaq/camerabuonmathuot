@@ -73,7 +73,7 @@ export default {
               password: this.password
             }
           })
-          soc.socket = soc.io(process.env.WS_URL)
+          soc.socket = soc.io(process.env.wsUrl)
           soc.socketStream = soc.ss(soc.socket)
           await this.$auth.setUser(await this.$axios.get('/user/me'))
           this.$router.push('/')

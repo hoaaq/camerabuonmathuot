@@ -78,6 +78,9 @@ export default {
       reverseButtons: true
     }]
   ],
+  env: {
+    wsUrl: process.env.WS_URL || 'ws://nuxtfile:4001'
+  },
   toast: {
       position: 'bottom-right',
       duration: 2000
