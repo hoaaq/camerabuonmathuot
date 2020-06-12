@@ -41,30 +41,46 @@ export default {
   data: () => ({
     darkmode: true,
     minute: '00',
-    hour: 0
+    hour: 12,
+    time: null,
+    date: null
   }),
   mounted() {
     const cv = document.querySelector('canvas')
     cv.height *= 1.12
+    this.$root.$on('dateQuery', (date) => {
+      this.date = date
+    })
   },
   methods: {
-    datetime(event) {
-      console.log(event)
-    },
     pickMinute(event) {
       this.minute = event.toString()
-      console.log(this.hour + ':' + this.minute)
+      this.timeQuery()
     },
     pickHour(action) {
       if (action === 'up')
-        this.hour = this.hour < 12 ? this.hour + 1 : this.hour
-      else this.hour = this.hour > 1 ? this.hour - 1 : this.hour
-      console.log(this.hour + ':' + this.minute)
+        if (this.hour === 12) {
+          this.hour = 1
+          this.pickDatetime()
+        } else this.hour++
+      else if (this.hour <= 1) {
+        this.hour = 12
+        this.pickDatetime()
+      } else this.hour--
+      this.timeQuery()
+    },
+    timeQuery() {
+      this.time = this.hour + ':' + this.minute
+      this.$root.$emit('timeQuery', this.time)
+      this.requestDataPlayBack()
     },
     pickDatetime() {
       this.darkmode = !this.darkmode
       if (this.darkmode) console.log('day')
       else console.log('night')
+    },
+    requestDataPlayBack() {
+      console.log(this.date + '\\' + this.time)
     }
   }
 }

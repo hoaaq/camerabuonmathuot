@@ -8,91 +8,137 @@
     <v-container>
       <v-card tile>
         <v-card-title>Cam list</v-card-title>
-        <v-radio-group style="height: 380px" class="overflow-y-auto">
-          <v-list-item v-for="item in items" :key="item">
-            <div
-              class="d-flex align-center justify-center"
-              style="cursor: pointer"
-              @click="makePickCam(item)"
-            >
-              <v-radio
-                :id="item"
-                :value="item"
-                @click="pickCam2(item)"
-              ></v-radio>
-              <v-list-item-title class="mb-2" v-text="item"></v-list-item-title>
-            </div>
+        <div class="ml-3">
+          <v-text-field
+            v-model="searchString"
+            label="Tìm kiếm"
+            @input="
+              searchString.length < 5 ? throttlesearch() : debouncesearch()
+            "
+          ></v-text-field>
+        </div>
+        <v-overlay :value="searchOverlay" absolute>
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </v-overlay>
+        <v-list two-line style="height: 327px" class="overflow-y-auto">
+          <v-list-item
+            v-for="(item, i) in listcam"
+            :key="i"
+            @click="handleSelectcam(item)"
+          >
+            <v-list-item-content>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-subtitle>{{ item.fulltext }}</v-list-item-subtitle>
+            </v-list-item-content>
           </v-list-item>
-        </v-radio-group>
+        </v-list>
       </v-card>
     </v-container>
   </v-container>
 </template>
 <script>
+import _ from 'lodash'
+// import soc from '~/plugins/socket.io'
+
 export default {
-  data: () => ({
-    items: [
-      'Cam 1',
-      'Cam 2',
-      'Cam 3',
-      'Cam 4',
-      'Cam 5',
-      'Cam 6',
-      'Cam 7',
-      'Cam 8',
-      'Cam 9',
-      'Cam 10',
-      'Cam 11'
-    ],
-    inputs: []
-    // model: ['Cam 1']
-  }),
-  methods: {
-    datetime(event) {
-      console.log(event)
-    },
-    pickCam2(items) {
-      console.log(items)
-      this.drawCanvas()
-    },
-    makePickCam(item) {
-      // document.get
-      // document.getElementById(item).click()
-      // this.drawCanvas()
-    },
-    getsrc(i) {
-      return new Promise(function(resolve) {
-        const img = new Image()
-        img.src = require('~/assets/' + i + '.jpg')
-        resolve(img)
-      })
-    },
-    async drawCanvas() {
-      console.log('draw')
-      let img = new Image()
-      // img.src = require('~/assets/2.jpg')
-      const cv = document.querySelector('canvas')
-      const ctx = cv.getContext('2d')
-      // ctx.scale(2, 2)
-      // ctx.scale(2, 2)
-      // cv.height *= 4
-      // cv.width *= 4
-      const i = 1
-      while (true) {
-        img = await this.getsrc(i)
-        ctx.drawImage(
-          img,
-          0,
-          0,
-          img.width,
-          img.height,
-          0,
-          0,
-          cv.width,
-          cv.height
-        )
-      }
+  async middleware({ store }) {
+    await store.dispatch('playback/getcams', { input: null })
+  },
+  data() {
+    return {
+      itv: undefined,
+      searchOverlay: false,
+      searchString: null,
+      loadCam: false,
+      date: null,
+      time: null
     }
+  },
+  computed: {
+    listcam() {
+      this.getListCam()
+      const lscam = this.$store.state.playback.listcam
+      return lscam
+    }
+  },
+  mounted() {
+    this.$root.$on('timeQuery', (time) => {
+      this.time = time
+    })
+  },
+  methods: {
+    async getListCam() {
+      if (!this.loadCam) {
+        this.loadCam = !this.loadCam
+        await this.$store.dispatch('playback/getcams', { input: null })
+      }
+    },
+    async handleSelectcam(item) {
+      // await this.$store.dispatch('playback/selectcam', item)
+    },
+    async sayt() {
+      this.searchOverlay = true
+      await this.$store.dispatch('playback/getcams', {
+        input: this.searchString
+      })
+      this.searchOverlay = false
+    },
+    throttlesearch: _.throttle(function(e) {
+      this.sayt()
+    }, 500),
+    debouncesearch: _.debounce(function(e) {
+      this.sayt()
+    }, 500),
+    datetime(event) {
+      this.date = event
+      this.$root.$emit('dateQuery', this.date)
+      this.requestDataPlayBack()
+    },
+    requestDataPlayBack() {
+      console.log(this.date + '\\' + this.time)
+    }
+    //         ctx.drawImage(
+    //           image,
+    //           0,
+    //           0,
+    //           image.width,
+    //           image.height,
+    //           0,
+    //           0,
+    //           canvas.width,
+    //           canvas.height
+    //         )
+    //       }
+    //       image.src = 'data:image/jpg;base64, ' + data
+    //     })
+    //   })
+    // }
+    // async draw() {
+    //   for (let i = 1; i < 7; i++) {
+    //     let img = new Image()
+    //     const cv = document.querySelector('canvas')
+    //     const ctx = cv.getContext('2d')
+    //     // ctx.scale(2, 2)
+    //     // ctx.scale(2, 2)
+    //     // cv.height *= 4
+    //     // cv.width *= 4
+    //     img = await this.getsrc(i)
+    //     ctx.drawImage(
+    //       img,
+    //       0,
+    //       0,
+    //       img.width,
+    //       img.height,
+    //       0,
+    //       0,
+    //       cv.width,
+    //       cv.height
+    //     )
+    //   }
+    // }
   }
 }
 </script>

@@ -22,3 +22,4 @@ export default {
 }
 </script>
 <style scoped></style>
+<style lang="scss" scoped src="./index.scss"></style>

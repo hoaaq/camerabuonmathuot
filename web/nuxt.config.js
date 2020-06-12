@@ -61,6 +61,11 @@ export default {
    ** Nuxt.js modules
    */
   modules: [
+    // Simple usage
+    'nuxt-leaflet',
+
+    // With options
+    ['nuxt-leaflet', { /* module options */ }],
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     // '@nuxtjs/pwa',
@@ -75,7 +80,8 @@ export default {
       confirmButtonText: 'Đồng ý',
       cancelButtonText: 'Hủy bỏ',
       showCancelButton: true,
-      reverseButtons: true
+      reverseButtons: true,
+
     }]
   ],
   toast: {
