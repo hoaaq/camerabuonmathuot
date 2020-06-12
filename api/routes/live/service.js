@@ -109,7 +109,7 @@ async function playcam({ user, socketUser, id }) {
     wsConsume.on('message', function (message) {
       const receiveMsg = JSON.parse(message);
       // stream.write(receiveMsg.payload);
-      socketUser[user.id].emit('livestream', {
+      socketUser[user.id].volatile.emit('livestream', {
         id,
         buffer: receiveMsg.payload,
       });

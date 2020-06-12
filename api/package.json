@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "pm": "pm2 start ./bin/www -i max"
   },
   "_moduleAliases": {
     "@knex": "./db/knex",
