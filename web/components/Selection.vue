@@ -25,11 +25,11 @@
         </v-overlay>
         <v-list two-line style="height: 327px" class="overflow-y-auto">
           <v-list-item
-            v-for="(item, i) in listcam"
+            v-for="(item, i) in listCam"
             :key="i"
             @click="handleSelectcam(item)"
           >
-            <v-list-item-content>
+            <v-list-item-content @click="selectCam(item)">
               <v-list-item-title>{{ item.name }}</v-list-item-title>
               <v-list-item-subtitle>{{ item.fulltext }}</v-list-item-subtitle>
             </v-list-item-content>
@@ -58,15 +58,31 @@ export default {
     }
   },
   computed: {
-    listcam() {
+    listCam() {
       this.getListCam()
-      const lscam = this.$store.state.playback.listcam
-      return lscam
+      return this.$store.state.playback.listcam
+    },
+    selectedcam() {
+      const selectedcam = this.$store.state.map.selectedcam
+      this.setnullCam()
+      return selectedcam
     }
   },
   mounted() {
     this.$root.$on('timeQuery', (time) => {
       this.time = time
+    })
+
+    this.$nextTick(() => {
+      const canvas = document.querySelector('canvas')
+      const ctx = canvas.getContext('2d')
+      ctx.scale(2, 2)
+      canvas.height *= 2
+      canvas.width *= 2
+
+      if (this.selectedcam.input) {
+        this.selectCam(this.selectedcam.input)
+      }
     })
   },
   methods: {
@@ -75,6 +91,9 @@ export default {
         this.loadCam = !this.loadCam
         await this.$store.dispatch('playback/getcams', { input: null })
       }
+    },
+    async setnullCam() {
+      await this.$store.dispatch('map/selectcam', { input: null })
     },
     async handleSelectcam(item) {
       // await this.$store.dispatch('playback/selectcam', item)
@@ -99,46 +118,14 @@ export default {
     },
     requestDataPlayBack() {
       console.log(this.date + '\\' + this.time)
+    },
+    selectCam(item) {
+      const canvas = document.querySelector('canvas')
+      const ctx = canvas.getContext('2d')
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.font = '30px Arial'
+      ctx.fillText(JSON.stringify(item), 10, 50)
     }
-    //         ctx.drawImage(
-    //           image,
-    //           0,
-    //           0,
-    //           image.width,
-    //           image.height,
-    //           0,
-    //           0,
-    //           canvas.width,
-    //           canvas.height
-    //         )
-    //       }
-    //       image.src = 'data:image/jpg;base64, ' + data
-    //     })
-    //   })
-    // }
-    // async draw() {
-    //   for (let i = 1; i < 7; i++) {
-    //     let img = new Image()
-    //     const cv = document.querySelector('canvas')
-    //     const ctx = cv.getContext('2d')
-    //     // ctx.scale(2, 2)
-    //     // ctx.scale(2, 2)
-    //     // cv.height *= 4
-    //     // cv.width *= 4
-    //     img = await this.getsrc(i)
-    //     ctx.drawImage(
-    //       img,
-    //       0,
-    //       0,
-    //       img.width,
-    //       img.height,
-    //       0,
-    //       0,
-    //       cv.width,
-    //       cv.height
-    //     )
-    //   }
-    // }
   }
 }
 </script>

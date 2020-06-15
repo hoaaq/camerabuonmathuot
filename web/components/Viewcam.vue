@@ -51,6 +51,10 @@ export default {
     this.$root.$on('dateQuery', (date) => {
       this.date = date
     })
+
+    this.$nextTick(() => {
+      console.log(this.listCam)
+    })
   },
   methods: {
     pickMinute(event) {
