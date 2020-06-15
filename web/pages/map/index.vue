@@ -3,7 +3,9 @@
     <v-layout id="map-wrap" style="height: 100vh">
       <v-layout style="position: absolute; top: 0; right: 0; z-index: 1000">
         <v-container fluid>
-          <!--          <v-btn outlined small @click="drawer = !drawer">Click</v-btn>-->
+          <v-btn small light fab @click="drawer = !drawer">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
         </v-container>
         <v-navigation-drawer
           v-model="drawer"
@@ -12,14 +14,14 @@
           fixed
           width="40%"
         >
-          <v-btn outlined small @click="drawer = !drawer"
-            ><v-icon>mdi-window-close</v-icon></v-btn
-          >
-          <div class="mt-5">
-            {{ camSelect }}
+          <v-btn small light fab @click="drawer = !drawer">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <div v-for="(cam, i) in camSelect" :key="cam" class="mt-5">
+            {{ cam }}
             <br />
             Status:
-            <span v-if="camStatus === 'Online' && camSelect.id != 6">
+            <span v-if="camStatus === 'Online' && cam.id !== 6">
               <v-icon size="25" :color="statusIconOnline.color">
                 {{ statusIconOnline.icon }}
               </v-icon>
@@ -31,7 +33,7 @@
               </v-icon>
               {{ camStatus }}
             </span>
-            <v-hover v-if="camSelect == null"></v-hover>
+            <v-hover v-if="cam == null"></v-hover>
             <v-hover v-else class="mt-3">
               <template>
                 <div
@@ -39,19 +41,22 @@
                   style="position: relative; height: 375px"
                 >
                   <canvas
-                    :id="'canvas' + camSelect.id"
+                    :id="'canvas' + cam.id"
                     class="liveviewcanvas"
                   ></canvas>
                   <div class="liveviewinfo">
-                    <span>{{ camSelect.code }}</span>
+                    <span>{{ cam.code }}</span>
                   </div>
                   <v-fade-transition>
                     <v-overlay absolute>
                       <v-btn icon color="info"
                         ><v-icon size="35">mdi-play</v-icon></v-btn
                       >
-                      <v-btn icon color="white" @click="openPlayBack(camSelect)"
+                      <v-btn icon color="white" @click="openPlayBack(cam)"
                         ><v-icon>mdi-film</v-icon></v-btn
+                      >
+                      <v-btn icon size="50" color="error" @click="removeCam(i)"
+                        ><v-icon>mdi-close</v-icon></v-btn
                       >
                     </v-overlay>
                   </v-fade-transition>
@@ -66,7 +71,14 @@
           url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
         ></l-tile-layer>
         <l-layer-group v-for="(l, idx) in latLong" :key="l">
-          <l-marker v-if="idx === 5" :lat-lng="l" @click="selectCam(idx)">
+          <l-marker
+            v-if="idxSelect.includes(idx) && idxSelect.length !== 0"
+            :lat-lng="l"
+            @click="selectCam(idx)"
+          >
+            <l-icon :icon-size="iConSize" :icon-url="camURL.select"> </l-icon>
+          </l-marker>
+          <l-marker v-else-if="idx !== 5" :lat-lng="l" @click="selectCam(idx)">
             <l-icon :icon-size="iConSize" :icon-url="camURL.online"> </l-icon>
           </l-marker>
           <l-marker v-else :lat-lng="l" @click="selectCam(idx)">
@@ -93,8 +105,9 @@ export default {
       center: [47.41322, -1.219482],
       iConSize: [45, 45],
       camURL: {
-        online: require('@/static/cam-icon.png'),
-        offline: require('@/static/off.png')
+        online: require('@/static/active.png'),
+        offline: require('@/static/offline.png'),
+        select: require('@/static/select.png')
       },
       drawer: false,
       items: [
@@ -112,7 +125,8 @@ export default {
         [10.7275, 106.703]
       ],
       loadCam: false,
-      camSelect: null,
+      camSelect: [],
+      idxSelect: [],
       camStatus: null,
       statusIconOnline: {
         icon: 'mdi-checkbox-marked-circle',
@@ -148,7 +162,7 @@ export default {
       //   .addTo(map)
       //
       // const camIcon = this.$L.icon({
-      //   iconUrl: require('~/static/cam-icon.png'),
+      //   iconUrl: require('~/static/off.png'),
       //   iconSize: [40, 40]
       // })
       //
@@ -178,15 +192,33 @@ export default {
         await this.$store.dispatch('map/getcams', { input: null })
       }
     },
+    removeCam(cam) {
+      const idxRemove = this.camSelect.indexOf(cam)
+      this.camSelect.splice(idxRemove, 1)
+      this.idxSelect.splice(idxRemove, 1)
+      console.log(this.camSelect)
+      this.drawer = this.camSelect.length !== 0
+    },
     selectCam(idx) {
-      if (this.camSelect === this.listcam[idx] && this.drawer === true) {
-        this.drawer = false
+      const idxRemove = this.camSelect.indexOf(this.listcam[idx])
+
+      if (idxRemove > -1) {
+        this.camSelect.splice(idxRemove, 1)
+        this.idxSelect.splice(idxRemove, 1)
+        console.log(this.camSelect)
+        this.drawer = this.camSelect.length !== 0
+
         return
       }
-      this.drawer = true
-      this.camSelect = this.listcam[idx]
-      this.camStatus = 'Online'
-      console.log(idx + 1 === 2)
+
+      if (this.camSelect.length === 5) {
+        alert('Max select is 5')
+      } else {
+        this.drawer = true
+        this.camSelect.push(this.listcam[idx])
+        this.idxSelect.push(idx)
+        this.camStatus = 'Online'
+      }
     },
     async openPlayBack(item) {
       // alert(idCam)
