@@ -5,6 +5,9 @@ router.get('/', function (req, res, next) {
   res.json({ title: 'Sample Fullstack api' });
 });
 
+const mobile = require('./mobile');
+router.use('/mobile', mobile);
+
 const user = require('./user');
 router.use('/user', user);
 

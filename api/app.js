@@ -15,7 +15,9 @@ var indexRouter = require('./routes/index');
 var app = express();
 
 var ioApp = require('http').createServer(handler);
-app.io = require('socket.io')(ioApp);
+app.io = require('socket.io')(ioApp, {
+  transports: ['websocket', 'polling'],
+});
 ioApp.listen(4001);
 function handler(req, res) {
   res.writeHead(200).end({});
@@ -38,22 +40,6 @@ app.io.sockets.on('connection', function (socket) {
   app._socket = socket;
   console.log(socket.id + ' connected');
 });
-
-// Create a pulsar client
-app.pulsar = null;
-app.pulsarUser = {};
-
-// // Create a reader
-// const reader = await client.createReader({
-//   topic: 'persistent://public/default/test-topic',
-//   startMessageId: Pulsar.MessageId.latest(),
-// });
-
-// // read messages
-// while (true) {
-//   const msg = await reader.readNext();
-//   console.log(msg.getData().toString());
-// }
 
 app.use([notfoundapi, errorHandler]);
 

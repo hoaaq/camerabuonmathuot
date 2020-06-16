@@ -73,8 +73,9 @@ export default {
               password: this.password
             }
           })
-          soc.socket = soc.io(process.env.wsUrl)
-          soc.socketStream = soc.ss(soc.socket)
+          soc.socket = soc.io.connect(process.env.wsUrl, {
+            transports: ['websocket', 'polling']
+          })
           await this.$auth.setUser(await this.$axios.get('/user/me'))
           this.$router.push('/')
         } catch (error) {

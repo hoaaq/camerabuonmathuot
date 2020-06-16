@@ -4,7 +4,7 @@ const { checkPassword } = require('@utils/helper');
 async function generateAuthToken(trx, src) {
   try {
     const user = this;
-    const token = jwt.sign({ id: user.id }, process.env.JWT_KEY);
+    const token = jwt.sign({ id: user.id, src }, process.env.JWT_KEY);
     await user
       .$relatedQuery('user_token', trx)
       .insert({ token: token, token_type: src === 'web' ? 'WEBLOGIN' : null });

@@ -79,7 +79,7 @@ export default {
     }]
   ],
   env: {
-    wsUrl: process.env.WS_URL || 'ws://localhost:4001'
+    wsUrl: process.env.WS_URL || 'ws://192.168.1.119:4001'
   },
   toast: {
       position: 'bottom-right',
@@ -139,6 +139,6 @@ export default {
     mode: 'out-in'
   },
   // server: {
-  //   host: '0' // default: localhost
+  //   host: '192.168.1.119' // default: localhost
   // }
 }

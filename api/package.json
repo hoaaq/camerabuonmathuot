@@ -25,6 +25,7 @@
     "express-async-errors": "^3.1.1",
     "express-jwt": "^5.3.3",
     "express-validator": "^6.5.0",
+    "fluent-ffmpeg": "^2.1.2",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.1",
     "module-alias": "^2.2.2",
@@ -35,7 +36,6 @@
     "objection-db-errors": "^1.1.2",
     "pg": "^8.2.1",
     "socket.io": "^2.3.0",
-    "socket.io-stream": "^0.9.1",
     "ws": "^7.3.0",
     "xlsx": "^0.16.1"
   },

@@ -3,7 +3,8 @@
         "source.fixAll": true
     },
     "eslint.workingDirectories": [
-        "./api"
+        "./api",
+        "./socket"
     ],
     "eslint.packageManager": "yarn"
 }

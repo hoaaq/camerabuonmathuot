@@ -65,8 +65,23 @@ const checkId = validate(
     },
   })
 );
+const checkSearch = validate(
+  checkSchema({
+    searchstring: {
+      in: ['query'],
+      errorMessage: 'Invalid searchstring',
+      isString: true,
+      optional: {
+        options: {
+          nullable: true,
+        },
+      },
+    },
+  })
+);
 
 module.exports = {
   listSchema,
   checkId,
+  checkSearch,
 };

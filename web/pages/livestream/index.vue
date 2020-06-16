@@ -33,6 +33,25 @@
           <v-btn outlined small @click="drawer = !drawer">Tùy chọn</v-btn>
         </div>
         <div class="d-flex flex-wrap liveview-contain">
+          <div class="liveview-loop" style="width: 100%">
+            <v-hover>
+              <template v-slot:default="{ hover }">
+                <div
+                  class="d-flex flex-column align-center liveview-box"
+                  style="position: relative"
+                >
+                  <!-- <video id="canvash264" class="liveviewcanvas"></video> -->
+                  <v-fade-transition>
+                    <v-overlay v-if="hover" absolute>
+                      <v-btn icon color="info" @click="handleh264"
+                        ><v-icon>mdi-play</v-icon></v-btn
+                      >
+                    </v-overlay>
+                  </v-fade-transition>
+                </div>
+              </template>
+            </v-hover>
+          </div>
           <div
             v-for="(cam, i) in selectedcam"
             :key="i"
