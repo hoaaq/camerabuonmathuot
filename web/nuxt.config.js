@@ -17,6 +17,9 @@ export default {
         content: process.env.npm_package_description || ''
       }
     ],
+    script: [
+      {src: 'https://webgl2fundamentals.org/webgl/resources/webgl-utils.js'}
+    ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
   /*
@@ -127,6 +130,13 @@ export default {
     extend(config, ctx) {
       config.node = {
         fs: "empty"
+      }
+      if (ctx.isClient) {
+        config.module.rules.push({
+          test: /\.worker\.js$/,
+          use: { loader: 'worker-loader' },
+          exclude: /(node_modules)/
+        })
       }
     }
   },

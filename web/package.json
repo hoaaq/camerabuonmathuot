@@ -30,7 +30,8 @@
     "vee-validate": "^3.3.0",
     "vue-socket.io-extended": "^4.0.3",
     "vue-sweetalert2": "^3.0.5",
-    "vuedraggable": "^2.23.2"
+    "vuedraggable": "^2.23.2",
+    "worker-loader": "^2.0.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.0",
