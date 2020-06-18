@@ -100,45 +100,6 @@ export default {
     requestDataPlayBack() {
       console.log(this.date + '\\' + this.time)
     }
-    //         ctx.drawImage(
-    //           image,
-    //           0,
-    //           0,
-    //           image.width,
-    //           image.height,
-    //           0,
-    //           0,
-    //           canvas.width,
-    //           canvas.height
-    //         )
-    //       }
-    //       image.src = 'data:image/jpg;base64, ' + data
-    //     })
-    //   })
-    // }
-    // async draw() {
-    //   for (let i = 1; i < 7; i++) {
-    //     let img = new Image()
-    //     const cv = document.querySelector('canvas')
-    //     const ctx = cv.getContext('2d')
-    //     // ctx.scale(2, 2)
-    //     // ctx.scale(2, 2)
-    //     // cv.height *= 4
-    //     // cv.width *= 4
-    //     img = await this.getsrc(i)
-    //     ctx.drawImage(
-    //       img,
-    //       0,
-    //       0,
-    //       img.width,
-    //       img.height,
-    //       0,
-    //       0,
-    //       cv.width,
-    //       cv.height
-    //     )
-    //   }
-    // }
   }
 }
 </script>
