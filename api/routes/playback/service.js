@@ -12,7 +12,7 @@ module.exports = {
 async function getcams({ user, query }) {
   try {
     const userlocation = await (
-      await user.$relatedQuery('location')
+        await user.$relatedQuery('location')
     ).$fetchGraph(`[childs.${depthRecursiveRelation('[childs?]', 3)}]`);
     let locId = [];
     function recursive(item) {
@@ -56,9 +56,9 @@ async function playcam({ user, socketUser, id }) {
     const wsProduce = new Websocket(topicProduce);
     const data = {
       camera_url: `rtsp://${encodeURIComponent(dvr.us)}:${encodeURIComponent(
-        dvr.pw
+          dvr.pw
       )}@${dvr.host}:${dvr.port}/cam/realmonitor?channel=${
-        camera.channel + 1
+          camera.channel + 1
       }&subtype=1`,
       camera_id: camera.id,
       fps: 15,
@@ -100,9 +100,9 @@ async function playcam({ user, socketUser, id }) {
 
     // Consumer
     const topicConsume = `ws://${process.env.PULSAR_HOST}:${
-      process.env.PULSAR_PORT_WS
+        process.env.PULSAR_PORT_WS
     }/ws/v2/consumer/${process.env.PULSAR_TOPIC_PREFIX}${camera.id}/sub_${
-      dvr.id
+        dvr.id
     }_${camera.id}_${Date.now()}`;
     return topicConsume;
   } catch (error) {

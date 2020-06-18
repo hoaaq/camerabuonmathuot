@@ -17,6 +17,9 @@ router.use('/menu', menu);
 const live = require('./live');
 router.use('/live', live);
 
+const playback = require('./playback');
+router.use('/playback', live);
+
 const cameramanagement = require('./cameramanagement');
 router.use('/cameramanagement', cameramanagement);
 
