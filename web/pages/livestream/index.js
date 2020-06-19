@@ -254,6 +254,8 @@ export default {
       const gl = canvas.getContext('2d', { alpha: false })
       // const glutils = this.webglUtils
       const image = new Image()
+
+      // console.log(ws)
       const wsConsume = new WebSocket(ws)
       wsConsume.onmessage = function(r) {
         const message = r.data

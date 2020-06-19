@@ -20,8 +20,6 @@ router.get('/play', [auth], async function (req, res, next) {
       user: req.user,
       socketUser: req.app.socketUser,
       id: req.query.id,
-      start_time: req.query.start_time,
-      end_time: req.query.end_time,
     };
     return res.send(await playcam(data));
   } catch (error) {

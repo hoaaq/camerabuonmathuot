@@ -18,7 +18,10 @@ const live = require('./live');
 router.use('/live', live);
 
 const playback = require('./playback');
-router.use('/playback', live);
+router.use('/playback', playback);
+
+const map = require('./map');
+router.use('/map', map);
 
 const cameramanagement = require('./cameramanagement');
 router.use('/cameramanagement', cameramanagement);

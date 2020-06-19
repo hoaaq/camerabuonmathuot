@@ -46,41 +46,25 @@ async function getcams({ user, query }) {
 }
 
 
-async function playcam({ user, socketUser, id, start_time, end_time }) {
+async function playcam({ user, socketUser, id }) {
   try {
     const camera = await Camera.query().findById(id);
     const dvr = await camera.$relatedQuery('dvr');
 
     // Producer
-    // const topicProduce = `ws://${process.env.PULSAR_HOST}:${process.env.PULSAR_PORT_WS}/ws/v2/producer/${process.env.PULSAR_TOPIC_PREFIX}camera-server-topic`;
-    // const wsProduce = new Websocket(topicProduce);
-    const camera_url = `rtsp://${
-                                  encodeURIComponent(dvr.us)
-                                }:${
-                                  encodeURIComponent(dvr.pw)
-                                }@${
-                                  dvr.host
-                                }:${
-                                  dvr.port
-                                }/cam/playback/?channel=${
-                                  camera.channel + 1
-                                }&subtype=1&start_time=${
-                                  start_time
-                                }&end_time=${end_time}`
-
-    // const data = {
-    //   camera_url: `rtsp://${encodeURIComponent(dvr.us)}:${encodeURIComponent(
-    //       dvr.pw
-    //   )}@${dvr.host}:${dvr.port}/cam/realmonitor?channel=${
-    //       camera.channel + 1
-    //   }&subtype=1`,
-    //   camera_id: camera.id,
-    //   fps: 15,
-    //   command: 'add',
-    //   size: [-1, 480],
-    // };
-    return JSON.stringify(camera_url)
-    /*
+    const topicProduce = `ws://${process.env.PULSAR_HOST}:${process.env.PULSAR_PORT_WS}/ws/v2/producer/${process.env.PULSAR_TOPIC_PREFIX}camera-server-topic`;
+    const wsProduce = new Websocket(topicProduce);
+    const data = {
+      camera_url: `rtsp://${encodeURIComponent(dvr.us)}:${encodeURIComponent(
+          dvr.pw
+      )}@${dvr.host}:${dvr.port}/cam/realmonitor?channel=${
+          camera.channel + 1
+      }&subtype=1`,
+      camera_id: camera.id,
+      fps: 15,
+      command: 'add',
+      size: [-1, 480],
+    };
     const message = {
       payload: Buffer.from(JSON.stringify(data)).toString('base64'),
     };
@@ -121,7 +105,6 @@ async function playcam({ user, socketUser, id, start_time, end_time }) {
         dvr.id
     }_${camera.id}_${Date.now()}`;
     return topicConsume;
-     */
   } catch (error) {
     throw error;
   }
