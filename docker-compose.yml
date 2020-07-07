@@ -22,7 +22,7 @@ services:
     ports:
       - 9004:4000
     networks: 
-      - database-network
+      - camera-network
 
   camera-web:
     env_file:
@@ -39,8 +39,8 @@ services:
     ports:
       - 9005:3000
     networks: 
-      - database-network
+      - camera-network
 
 networks: 
-  database-network:
+  camera-network:
     external: true
