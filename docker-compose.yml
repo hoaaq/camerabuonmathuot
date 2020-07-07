@@ -7,9 +7,9 @@ services:
     environment:
       POSTGRES_PASSWORD: abc12345
     ports:
-      - 5432:5432
+      - 9003:5432
     networks: 
-      - database-network
+      - camera-network
 
   camera-api:
     env_file:
@@ -20,8 +20,7 @@ services:
     environment:
       - TZ=Asia/Ho_Chi_Minh
     ports:
-      - 4000:4000
-      - 4001:4001
+      - 9004:4000
     networks: 
       - database-network
 
@@ -31,14 +30,14 @@ services:
     build:
       context: ./web
       args:
-        - API_BASE_URL=http://192.168.2.168:4000
-        - API_BROWSER_URL=http://192.168.2.168:4000
-        - WS_URL=ws://192.168.2.168:4001
+        - API_BASE_URL=http://115.79.28.221:9004
+        - API_BROWSER_URL=http://115.79.28.221:9004
+        - WS_URL=ws://115.79.28.221:9004
     environment:
       - TZ=Asia/Ho_Chi_Minh
     restart: always
     ports:
-      - 3000:3000
+      - 9005:3000
     networks: 
       - database-network
 
