@@ -21,7 +21,7 @@
     "base64-arraybuffer": "^0.2.0",
     "leaflet": "^1.6.0",
     "lodash": "^4.17.15",
-    "moment": "^2.25.3",
+    "moment": "^2.29.2",
     "net": "^1.0.2",
     "nuxt": "^2.0.0",
     "nuxt-leaflet": "^0.0.21",
